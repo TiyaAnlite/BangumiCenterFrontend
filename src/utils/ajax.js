@@ -1,8 +1,8 @@
 import axios from 'axios'
-import { Message } from '@arco-design/web-vue'
+// import { Message } from '@arco-design/web-vue'
 // import store from "@/store";
 // 根据环境不同引入不同api地址
-const baseApi = '/'
+const baseApi = import.meta.env.BASE_URL
 // create an axios instance
 const service = axios.create({
   baseURL: baseApi, // url = base api url + request url
@@ -38,20 +38,12 @@ service.interceptors.request.use(
 service.interceptors.response.use(
   (response) => {
     const res = response.data
-    if (res.status === 0 || res.code === 0) {
-      // // 登录超时,重新登录
-      Message({
-        content: res.message || res.msg,
-      })
-      return Promise.reject(res || 'error')
-    }
-    else {
-      return Promise.resolve(res)
-    }
+    return Promise.resolve(res)
   },
   (error) => {
-    const res = error.response
-    Message.error(res.data.message)
+    // const res = error.response
+    // window.console.error(res)
+    // Message.error(res)
     return Promise.reject(error)
   },
 )

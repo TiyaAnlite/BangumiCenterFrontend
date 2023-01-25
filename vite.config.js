@@ -20,8 +20,16 @@ require('dotenv-flow').config({
 })
 const prod = process.env.NODE_ENV === 'production'
 
-const apiPrefix = `${process.env.ROOT || '/'}api`
+const apiPrefix = `${process.env.ROOT || '/'}api/main`
+const bgmPrefix = `${process.env.ROOT || '/'}bgm`
+const apiBgmPrefix = `${process.env.ROOT || '/'}api/bgm`
+const apiBiliPrefix = `${process.env.ROOT || '/'}api/bili`
 const apiRegexp = new RegExp(`^${apiPrefix}`)
+const bgmRegexp = new RegExp(`^${bgmPrefix}`)
+const apiBgmRegexp = new RegExp(`^${apiBgmPrefix}`)
+const apiBiliRegexp = new RegExp(`^${apiBiliPrefix}`)
+process.env.VITE_ROOT = process.env.ROOT
+process.env.VITE_API_SERVER = process.env.API_SERVER
 
 const minimizeIndex = () => {
   return {
@@ -99,8 +107,36 @@ export default defineConfig({
   server: {
     proxy: {
       [apiPrefix]: {
-        target: `http://${process.env.API_SERVER}`,
+        target: process.env.API_SERVER,
+        changeOrigin: true,
         rewrite: path => path.replace(apiRegexp, ''),
+        headers: {
+          referer: process.env.API_SERVER,
+        },
+      },
+      [bgmPrefix]: {
+        target: process.env.BGM_SERVER,
+        changeOrigin: true,
+        rewrite: path => path.replace(bgmRegexp, ''),
+        headers: {
+          referer: process.env.BGM_SERVER,
+        },
+      },
+      [apiBgmPrefix]: {
+        target: process.env.BGM_API_SERVER,
+        changeOrigin: true,
+        rewrite: path => path.replace(apiBgmRegexp, ''),
+        headers: {
+          referer: process.env.BGM_API_SERVER,
+        },
+      },
+      [apiBiliPrefix]: {
+        target: process.env.BILI_API_SERVER,
+        changeOrigin: true,
+        rewrite: path => path.replace(apiBiliRegexp, ''),
+        headers: {
+          referer: process.env.BILI_API_SERVER,
+        },
       },
     },
   },
